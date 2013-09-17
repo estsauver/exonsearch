@@ -9,6 +9,7 @@
   :ring {:handler guestbook.handler/war-handler
          :init guestbook.handler/init
          :destroy guestbook.handler/destroy}
+  :min-lein-version "2.0.0"
   :profiles
   {:production
    {:ring
