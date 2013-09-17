@@ -4,8 +4,8 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [compojure "1.1.5"]
                  [hiccup "1.0.3"]
-                 [ring-server "0.2.8"]]
-  :plugins [[lein-ring "0.8.5"]]
+                 [ring-server "0.3.0"]]
+  :plugins [[lein-ring "0.8.7"]]
   :ring {:handler guestbook.handler/war-handler
          :init guestbook.handler/init
          :destroy guestbook.handler/destroy}

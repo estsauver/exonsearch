@@ -6,10 +6,10 @@
 
 (defn exon-form [search, body]  (form-to [:post "/"]
             [:p "Search String"]
-            (text-field "search" search)
+            (text-field {:placeholder search} "search" )
 
             [:p "Sequence Body"]
-            (text-area {:rows 10, :cols 40} "body" body)
+            (text-area {:rows 10, :cols 40, :placeholder body} "body")
 
             [:br]
             (submit-button "Search")
@@ -29,7 +29,7 @@
                      (seq string)
                      ) "[A-Z]*")
           )
-                          )
+  )
 
 (defn regex [string] (re-pattern (regex-string string)
                        )
@@ -40,6 +40,7 @@
   (layout/common [:h1 "Showing exons"]
                  (exon-form search body)
                  [:br]
+                 [:h2 "Results:"]
                   (find-string search body)))
 
 (defroutes home-routes

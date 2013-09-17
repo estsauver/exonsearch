@@ -1,6 +1,6 @@
 (ns guestbook.views.layout
-  (:require [hiccup.page :refer [html5 include-css]
-             [hiccup.form :refer :all]]))
+  (:require [hiccup.page :refer [html5 include-css]]
+             [hiccup.form :refer :all]))
 
 (defn common [& body]
   (html5
