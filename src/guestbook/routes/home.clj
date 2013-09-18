@@ -1,23 +1,28 @@
 (ns guestbook.routes.home
   (:require [compojure.core :refer :all]
             [guestbook.views.layout :as layout]
-            [hiccup.form :refer :all]))
+            [hiccup.form :refer :all]
+            [hiccup.element :refer :all]))
 
 
-(defn exon-form [search, body]  (form-to [:post "/"]
-            [:p "Search String"]
-            (text-field {:placeholder search} "search" )
+(defn exon-form [search, body]
+  
+    (form-to [:post "/"]
+             [:div {:class "form-group"} [:p "Search String"]
+             (text-field {:placeholder search} "search" )
+              ]
 
-            [:p "Sequence Body"]
-            (text-area {:rows 10, :cols 40, :placeholder body} "body")
-
-            [:br]
-            (submit-button "Search")
-            ))
+             [:div {:class "form-group"}
+             [:p "Sequence Body"]
+             (text-area {:class "form-control" :rows "10", :placeholder body} "body")
+              ]
+             
+             (submit-button {:class "btn btn-primary"} "Search")
+             ))
 
 (defn home [] 
   (layout/common
-   [:h1 "Hello World!"]
+   [:h1 "Exonsearch"]
    (exon-form "Input Search Here" "Sequence Here")
    )
   )
@@ -35,13 +40,23 @@
                        )
   )
 
-(defn find-string [search, body] (re-find (regex search) (clojure.string/join body)))
+(defn find-string [search, body] (re-find (regex (clojure.string/upper-case search)) (clojure.string/join
+                                                                                     (clojure.string/split-lines body))
+                                                 )
+                                          )
 (defn exons [search body]
-  (layout/common [:h1 "Showing exons"]
-                 (exon-form search body)
+  (layout/common  (link-to "/" [:h1  "Showing exons"])
+                  [:div
+                   [:strong "Search String:"]
+                   search]
+                  [:pre {:class "pre-scrollable" } body]
+                  
                  [:br]
                  [:h2 "Results:"]
-                  (find-string search body)))
+                 [:div {:class "results" :style "width: 100%; word-wrap:break-word;"} (find-string search body)]
+                 (link-to "/" [:button {:class "btn btn-primary"} "Search Again"])
+                 )
+  )
 
 (defroutes home-routes
   (GET "/" [] (home))
