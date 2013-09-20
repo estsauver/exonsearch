@@ -27,23 +27,61 @@
    )
   )
 
+(defn strip-headers [lines] (cond
+                             (= \> (first (first lines))) (rest lines)
+                             :else lines)
+  )
+
+(defn join-and-strip [lines] ( clojure.string/join (strip-headers (clojure.string/split-lines  lines))))
+
+(defn exons-string [text] (clojure.string/replace text #"[a-z]+" ","))
+(def base  "AACasdfAAGAB")
+
+
+
 (defn regex-string [string]
    (clojure.string/join
-                   (concat "[A-Z]*" (interpose
-                     "[a-z]*"
+                    (interpose
+                     ",*"
                      (seq string)
-                     ) "[A-Z]*")
+                     )
           )
-  )
+   )
 
 (defn regex [string] (re-pattern (regex-string string)
                        )
   )
 
-(defn find-string [search, body] (re-find (regex (clojure.string/upper-case search)) (clojure.string/join
-                                                                                     (clojure.string/split-lines body))
-                                                 )
-                                          )
+(defn match [search original] (re-find (regex search) (exons-string original)))
+
+(defn html-output [search original]
+  (let [match (re-find (regex search) (exons-string original))]
+    (clojure.string/split
+     (clojure.string/replace
+      (exons-string original)
+      match
+      (clojure.string/replace
+       (str "<b>" match "</b>")
+       #","
+       "</b>,<b>"))
+     #","
+     )
+    )
+  )
+(defn results-seq [search base] (map-indexed (fn [idx itm] [(inc idx) (nil? (re-find #"b" itm)) itm]) (html-output search (join-and-strip base))))
+(html-output "CAAG" base) 
+
+
+
+                                        ; "," "</em>,<em>"
+
+
+
+
+(defn find-string [search, body] (re-find (regex (exons-string body))))
+   
+
+
 (defn exons [search body]
   (layout/common  (link-to "/" [:h1  "Showing exons"])
                   [:div
@@ -53,7 +91,8 @@
                   
                  [:br]
                  [:h2 "Results:"]
-                 [:div {:class "results" :style "width: 100%; word-wrap:break-word;"} (find-string search body)]
+                 [:table {:class "table"}                      ;
+                  (map (fn [elem] [:tr (if-not (nth elem 1) {:class "success"}) [:td (nth elem 0)]  [:td (nth elem 2)]]) (results-seq search body))]
                  (link-to "/" [:button {:class "btn btn-primary"} "Search Again"])
                  )
   )
