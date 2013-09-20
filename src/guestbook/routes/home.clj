@@ -9,7 +9,7 @@
   
     (form-to [:post "/"]
              [:div {:class "form-group"} [:p "Search String"]
-             (text-field {:placeholder search} "search" )
+             (text-field {:class "form-controller" :placeholder search} "search" )
               ]
 
              [:div {:class "form-group"}
@@ -84,7 +84,7 @@
 
 (defn exons [search body]
   (layout/common  (link-to "/" [:h1  "Showing exons"])
-                  [:div
+                  [:div {:class "searchstring"}
                    [:strong "Search String:"]
                    search]
                   [:pre {:class "pre-scrollable" } body]

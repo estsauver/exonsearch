@@ -16,3 +16,7 @@ table {
 th, td {
     min-width: 48px;
 }
+
+.searchstring {
+    word-break: break-all;
+}
